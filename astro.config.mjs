@@ -6,7 +6,7 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://spokane-johanne.netlify.app",
+  site: "https://spokanejohanne.com",
   integrations: [mdx(), sitemap()],
   output: "server",
   adapter: netlify(),
