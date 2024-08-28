@@ -16,18 +16,17 @@ import { SITE_TITLE } from '../consts';
 <style>
 	header {
 		margin: 0;
-		background: #B8CDF8;
 	}
 	h2 {
 		margin: 0;
 		font-size: 1em;
 	}
-
 	nav {
 		display: flex;
 		align-items: center;
 		justify-content: space-around;
 		flex-wrap: wrap;
+		gap: 0.5em;
 		padding: .5em 0;
 	}
 	nav a {
@@ -40,13 +39,5 @@ import { SITE_TITLE } from '../consts';
 		text-decoration: none;
 		border-bottom-color: var(--accent);
 	}
-	.social-links,
-	.social-links a {
-		display: flex;
-	}
-	@media (max-width: 720px) {
-		.social-links {
-			display: none;
-		}
-	}
+
 </style>
