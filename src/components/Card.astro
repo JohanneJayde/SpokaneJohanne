@@ -1,15 +1,43 @@
 ---
 import FormattedDate from "./FormattedDate.astro";
-
+import type { Post } from "../types";
 const { post } = Astro.props;
 ---
 
+<style>
+    a {
+      text-decoration: none;
+      display: block;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      transition: box-shadow 0.3s ease;
+    }
+  
+    a:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  
+    h2 {
+      font-size: 1.5rem;
+      margin: 0 0 8px;
+      color: #333;
+    }
+
+  
+    img {
+      width: 100%;
+      height: 150px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+  </style>
+
 <a href={`/blog/${post.slug}/`}>
-    <img  src={post.data.heroImage} alt="" />
-    <div>
-        <h4 class="title">{post.data.title}</h4>
-        <p class="date">
-            <FormattedDate date={post.data.pubDate} />
-        </p>
-    </div>
+    <h2>{post.title}</h2>
+    <FormattedDate date={post.pubDate} />
+    <p>{post.excerpt}</p>
+    <img src={post.heroImage} alt={post.title} />
 </a>
+
+
