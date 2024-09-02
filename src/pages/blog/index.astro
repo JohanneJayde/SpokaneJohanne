@@ -3,7 +3,6 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
-import FormattedDate from '../../components/FormattedDate.astro';
 import Card from '../../components/Card.astro';
 import type { Post } from '../../types';
 import {gql, GraphQLClient} from 'graphql-request';
@@ -38,11 +37,10 @@ const posts = response.posts.nodes.map((post : any) => ({
 	description: post.excerpt,
 	pubDate: post.date,
 	updatedDate: post.modified,
-	heroImage: post.featuredImage.node.sourceUrl,
+	heroImage: post.featuredImage?.node.sourceUrl,
 	content: post.content
 }));
 
-console.log(posts);
 
 ---
 
@@ -86,15 +84,13 @@ console.log(posts);
 	<body>
 		<Header />
 		<main>
-			<section>
-				<ul>
+			<section class="grid grid-cols-1 gap-4">
 					{
 						posts.map((post : Post) => (
 							<Card post={post} />
 
 						))
 					}
-				</ul>
 			</section>
 		</main>
 		<Footer />

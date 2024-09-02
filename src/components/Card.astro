@@ -37,7 +37,7 @@ const { post } = Astro.props;
     <h2>{post.title}</h2>
     <FormattedDate date={post.pubDate} />
     <p>{post.excerpt}</p>
-    <img src={post.heroImage} alt={post.title} />
+    {post.heroImage && <img src={post.heroImage} alt={post.title} />}
 </a>
 
 
