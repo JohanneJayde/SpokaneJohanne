@@ -4,7 +4,6 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import Card from '../../components/Card.astro';
-import type { Post } from '../../types';
 import {gql, GraphQLClient} from 'graphql-request';
 
 const client = new GraphQLClient(import.meta.env.WORDPRESS_URL + '/graphql');
@@ -23,22 +22,42 @@ const query = gql`
 						sourceUrl
 					}
 				}
+				author {
+					node {
+						id
+						name
+					}
+      			}
+				categories {
+					nodes {
+						id
+						name
+					}
+				}
+				tags {
+					nodes {
+						id
+						name
+					}
+				}
 				content
 			}
 		}
 	}
 `;
 
-const response = await client.request(query);
+const response : GraphQLResponse = await client.request(query);
 
-const posts = response.posts.nodes.map((post : any) => ({
+const posts : Post[] = response.posts.nodes.map((post : any) => ({
 	title: post.title,
 	slug: post.slug,
-	description: post.excerpt,
+	excerpt: post.excerpt,
 	pubDate: post.date,
-	updatedDate: post.modified,
-	heroImage: post.featuredImage?.node.sourceUrl,
-	content: post.content
+	featuredImage: post.featuredImage?.node.sourceUrl,
+	content: post.content,
+	tags: post.tags.nodes.map((tag : any) => tag.name),
+	categories: post.categories.nodes.map((category : any) => category.name),
+	author: post.author.node.name
 }));
 
 

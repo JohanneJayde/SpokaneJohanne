@@ -1,6 +1,5 @@
 ---
 import FormattedDate from "./FormattedDate.astro";
-import type { Post } from "../types";
 const { post } = Astro.props;
 ---
 
@@ -31,13 +30,14 @@ const { post } = Astro.props;
       border-radius: 8px;
       object-fit: cover;
     }
+
   </style>
 
 <a href={`/blog/${post.slug}/`}>
     <h2>{post.title}</h2>
     <FormattedDate date={post.pubDate} />
-    <p>{post.excerpt}</p>
-    {post.heroImage && <img src={post.heroImage} alt={post.title} />}
+    <Fragment set:html={post.excerpt} />
+    {post.featuredImage && <img src={post.featuredImage} alt={post.title} />}
 </a>
 
 
