@@ -1,15 +1,67 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = "About Johanne"
+const description = "Learn more about Johanne McClenahan!"
+const heroImage = "./johanne.jpg"
 ---
 
-<Layout
-	title="About Me"
-	description="Learn more about me"
-	pubDate={new Date('August 27 2024')}
-	heroImage="/photography.jpeg"
->
-	<p>
-		I live in Spokane Washington and am interested in Software Development
-	</p>
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+		<style>
+			main {
+				max-width: 100%;
+				margin: 0;
+			}
 
-</Layout>
+			.hero-image img {
+				width: 500px;
+				height: 400px;
+				object-position:  bottom 1em;
+				object-fit: cover;
+				margin: auto;
+
+			}
+			.prose {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				color: rgb(var(--gray-dark));
+			}
+			.title {
+				margin-bottom: 1em;
+				padding: 1em 0;
+				text-align: center;
+				line-height: 1;
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<article>
+				<div class="title">
+					<h1>About Me</h1>
+					<hr />
+				</div>
+				<div class="prose">
+					<div class="hero-image mb-4">
+						{heroImage && <img src={heroImage} alt="" />}
+					</div>
+					<p>
+						I live in Spokane Washington and am interested in Software Development. I have made this blog in order to talk about my experiences living in Spokane as well as day to day life.
+					</p>
+					<p>
+						Please be sure to stay tuned as I plan on making content more regularly once I am more used to writing content :)
+					</p>
+				</div>
+
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>

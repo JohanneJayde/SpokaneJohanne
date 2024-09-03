@@ -59,8 +59,6 @@ const posts : Post[] = response.posts.nodes.map((post : any) => ({
 	categories: post.categories.nodes.map((category : any) => category.name),
 	author: post.author.node.name
 }));
-
-
 ---
 
 <!doctype html>
@@ -69,29 +67,13 @@ const posts : Post[] = response.posts.nodes.map((post : any) => ({
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
 			main {
-				width: 960px;
+				width: 80%;
 			}
 			
 			img{
 				height: 200px;
 				width: 400px;
 				object-fit: cover;
-			}
-
-			li{
-				display: flex;
-				align-items: center;
-				padding: 1em;
-				border-radius: 6px;
-				border : 2px solid var(--accent);
-				box-shadow: 0 0 10px rgba(0,0,0,0.1);
-			}
-
-			a{
-				display: flex;
-				align-items: center;
-				gap: 1em;
-				text-decoration: none;
 			}
 
 			section{
