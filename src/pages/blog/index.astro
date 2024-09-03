@@ -3,12 +3,64 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
-import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
+import Card from '../../components/Card.astro';
+import {gql, GraphQLClient} from 'graphql-request';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const client = new GraphQLClient(import.meta.env.WORDPRESS_URL + '/graphql');
+
+const query = gql`
+	query {
+		posts {
+			nodes {
+				title
+				excerpt
+				date
+				modified
+				slug
+				featuredImage {
+					node {
+						sourceUrl
+					}
+				}
+				author {
+					node {
+						id
+						name
+					}
+      			}
+				categories {
+					nodes {
+						id
+						name
+					}
+				}
+				tags {
+					nodes {
+						id
+						name
+					}
+				}
+				content
+			}
+		}
+	}
+`;
+
+const response : GraphQLResponse = await client.request(query);
+
+const posts : Post[] = response.posts.nodes.map((post : any) => ({
+	title: post.title,
+	slug: post.slug,
+	excerpt: post.excerpt,
+	pubDate: post.date,
+	featuredImage: post.featuredImage?.node.sourceUrl,
+	content: post.content,
+	tags: post.tags.nodes.map((tag : any) => tag.name),
+	categories: post.categories.nodes.map((category : any) => category.name),
+	author: post.author.node.name
+}));
+
+
 ---
 
 <!doctype html>
@@ -19,74 +71,31 @@ const posts = (await getCollection('blog')).sort(
 			main {
 				width: 960px;
 			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
+			
+			img{
+				height: 200px;
+				width: 400px;
+				object-fit: cover;
 			}
 
-			img{
-				height: 500px;
-				object-fit: cover;
+			li{
+				display: flex;
+				align-items: center;
+				padding: 1em;
+				border-radius: 6px;
+				border : 2px solid var(--accent);
+				box-shadow: 0 0 10px rgba(0,0,0,0.1);
+			}
+
+			a{
+				display: flex;
+				align-items: center;
+				gap: 1em;
+				text-decoration: none;
+			}
+
+			section{
+				padding: 1em;
 			}
 
 		</style>
@@ -94,22 +103,13 @@ const posts = (await getCollection('blog')).sort(
 	<body>
 		<Header />
 		<main>
-			<section>
-				<ul>
+			<section class="grid grid-cols-1 gap-4">
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.slug}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
+						posts.map((post : Post) => (
+							<Card post={post} />
+
 						))
 					}
-				</ul>
 			</section>
 		</main>
 		<Footer />

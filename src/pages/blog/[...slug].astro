@@ -1,21 +1,85 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
+import {gql, GraphQLClient} from 'graphql-request';
 export const prerender = true;
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.slug },
-		props: post,
-	}));
+	const client = new GraphQLClient(import.meta.env.WORDPRESS_URL + '/graphql');
+
+	const query = gql`
+		query {
+			posts {
+				nodes {
+					title
+					excerpt
+					date
+					modified
+					slug
+					featuredImage {
+						node {
+							sourceUrl
+						}
+					}
+					author {
+						node {
+							id
+							name
+						}
+      				}
+					categories {
+						nodes {
+							id
+							name
+						}
+					}
+					tags {
+						nodes {
+							id
+							name
+						}
+					}
+					content
+				}
+			}
+		}
+	`;
+
+	const response : GraphQLResponse = await client.request(query);
+
+	 return response.posts.nodes.map((post : any) => ({
+		params: {
+			slug: post.slug
+		},
+		props : {
+			title: post.title,
+			slug: post.slug,
+			description: post.excerpt,
+			pubDate: post.date,
+			updatedDate: post.modified,
+			heroImage: post.featuredImage?.node.sourceUrl,
+			content: post.content,
+			tags: post.tags.nodes.map((tag : any) => tag.name),
+			categories: post.categories.nodes.map((category : any) => category.name),
+			author: post.author.node.name
+		}
+	 }));
+};
+
+type Props = {
+	title: string;
+	description: string;
+	pubDate: string;
+	updatedDate: string;
+	heroImage: string;
+	content: string;
 }
-type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
-const { Content } = await post.render();
+
 ---
 
-<BlogPost {...post.data}>
-	<Content />
+<BlogPost {...post}>
+	<Fragment set:html={post.content} />
 </BlogPost>
+
+
